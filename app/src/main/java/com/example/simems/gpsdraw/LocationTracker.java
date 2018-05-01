@@ -1,6 +1,7 @@
 package com.example.simems.gpsdraw;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import android.location.Location;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -57,6 +59,9 @@ public class LocationTracker extends ContextWrapper {
 
     public void stopLocationTracking() {
         trackingScheduler.cancel();
+        SvgConverter converter = new SvgConverter();
+        String svg = converter.createSvgFromLocationList(locationList);
+        Log.d("svg", svg);
     }
 
     private void checkLocationPermission(){
@@ -65,7 +70,7 @@ public class LocationTracker extends ContextWrapper {
                     ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     ) {//Can add more as per requirement
 
-                ActivityCompat.requestPermissions(this,
+                ActivityCompat.requestPermissions( (Activity) this.getBaseContext(),
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                         123);
             }
@@ -74,10 +79,10 @@ public class LocationTracker extends ContextWrapper {
 
     @Override
     public String toString() {
-        String locations = "";
+        String locations = "locations: \n";
 
         for (Location location : locationList) {
-            locations.concat(location.getLatitude() + " : " + location.getLongitude());
+            locations = locations.concat(location.getLatitude() + " : " + location.getLongitude() + "\n");
         }
 
         return locations;
