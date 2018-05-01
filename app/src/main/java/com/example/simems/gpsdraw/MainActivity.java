@@ -28,10 +28,6 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FusedLocationProviderClient locationClient;
-    private boolean currentlyTracking = false;
-    private Timer locationTrackingScheduler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,71 +35,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        locationTrackingScheduler = new Timer();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-            checkPermission();
-        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!currentlyTracking) {
-                    currentlyTracking = true;
-                    startLocationTracking();
-                } else {
-                    stopLocationTracking();
-                }
+
             }
         });
     }
 
-    private void startLocationTracking() {
-        locationTrackingScheduler.scheduleAtFixedRate(new TimerTask(){
-            @Override
-            public void run(){
-                displayLocation();
-            }
-        },0,500);
-    }
-
-    private void displayLocation() {
-        locationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        final TextView text = findViewById(R.id.locationText);
-
-        Task<Location> locationTask;
-        try {
-            locationTask = locationClient.getLastLocation();
-            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    text.setText(location.toString());
-                }
-            });
-        } catch (SecurityException e) {
-            //noe feil
-            text.setText("Could not find location: " + e.toString());
-        }
-    }
-
-    private void stopLocationTracking() {
-        locationTrackingScheduler.cancel();
-        TextView text = findViewById(R.id.locationText);
-        text.setText("cancelled");
-    }
-
-    private void checkPermission(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                ){//Can add more as per requirement
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
-                    123);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
