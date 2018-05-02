@@ -12,7 +12,9 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -26,6 +28,16 @@ public class LocationTracker extends ContextWrapper {
 
     private Timer trackingScheduler = new Timer();
     private List<Location> locationList = new ArrayList<>();
+    private FusedLocationProviderClient locationClient
+            = LocationServices.getFusedLocationProviderClient(this);
+
+    private LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locations) {
+            Log.d("locationcallback", locations.getLastLocation().toString());
+            locationList.add(locations.getLastLocation());
+        }
+    };
 
     public LocationTracker(Context context) {
         super(context);
@@ -33,41 +45,24 @@ public class LocationTracker extends ContextWrapper {
     }
 
     public void startLocationTracking() {
-        trackingScheduler.scheduleAtFixedRate(new TimerTask(){
-            @Override
-            public void run(){
-                appendCurrentLocation();
-            }
-        },0,500);
+        try {
+            locationClient.requestLocationUpdates(createLocationRequest(),
+                    locationCallback, null);
+        } catch (SecurityException e) {
+            Log.e("locationcallback", e.getMessage());
+        }
     }
 
     private LocationRequest createLocationRequest() {
         LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return mLocationRequest;
     }
 
-    private void appendCurrentLocation() {
-        FusedLocationProviderClient locationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        Task<Location> locationTask;
-        try {
-            locationTask = locationClient.getLastLocation();
-            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    locationList.add(location);
-                }
-            });
-        } catch (SecurityException e) {
-            //noe feil
-        }
-    }
-
     public void stopLocationTracking() {
-        trackingScheduler.cancel();
+        locationClient.removeLocationUpdates(locationCallback);
     }
 
     private void checkLocationPermission(){
