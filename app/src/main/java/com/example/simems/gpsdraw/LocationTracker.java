@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -40,6 +41,14 @@ public class LocationTracker extends ContextWrapper {
         },0,500);
     }
 
+    private LocationRequest createLocationRequest() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return mLocationRequest;
+    }
+
     private void appendCurrentLocation() {
         FusedLocationProviderClient locationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -59,9 +68,6 @@ public class LocationTracker extends ContextWrapper {
 
     public void stopLocationTracking() {
         trackingScheduler.cancel();
-        SvgConverter converter = new SvgConverter();
-        String svg = converter.createSvgFromLocationList(locationList);
-        Log.d("svg", svg);
     }
 
     private void checkLocationPermission(){

@@ -1,5 +1,6 @@
 package com.example.simems.gpsdraw;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -7,7 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +37,11 @@ public class MainActivity extends AppCompatActivity {
                     tracking = true;
                 } else {
                     tracker.stopLocationTracking();
+                    List<Location> locations = tracker.getLocationList();
+                    SvgConverter converter = new SvgConverter();
+                    String svg = converter.createSvgFromLocationList(locations);
+                    EditText svgContainer = findViewById(R.id.svgContainer);
+                    svgContainer.setText(svg);
                     text.setText(tracker.toString());
                 }
             }

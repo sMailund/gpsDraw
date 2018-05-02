@@ -53,14 +53,18 @@ public class SvgConverter {
 
     /**
      * calculates position in either x or y axis of a point. position is an offset from the start
-     * of the path, which should start at the middle of the canvas
+     * of the path, which should start at the middle of the canvas. Coordinates are multiplied by
+     * 100000 in order to get the fifth decimal place, so that movements in gps-coordinates make a
+     * larger difference in the svg path. According to
+     * https://gis.stackexchange.com/questions/8650/measuring-accuracy-of-latitude-and-longitude/8674#8674
+     * the fifth decimal place in a gps coordinate should represent approximately 1.1 meters
      * @param pos1 position of the start of the path
      * @param pos2 position of the new point
      * @param fullLength full length of the canvas
      * @return position in either x or y axis for the new point
      */
     private double calculatePosition(double pos1, double pos2, double fullLength) {
-        return (fullLength / 2) + (pos1 - pos2);
+        return (fullLength / 2) + ((pos1 - pos2) * 100000);
     }
 
     private String createOpenRootTag() {
