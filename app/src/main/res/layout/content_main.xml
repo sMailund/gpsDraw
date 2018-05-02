@@ -18,18 +18,12 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/iterations"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
-
     <EditText
         android:id="@+id/svgContainer"
         android:layout_width="286dp"
         android:layout_height="196dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="textMultiLine"
         android:singleLine="false"
         android:text="svg will appear here"
         tools:layout_editor_absoluteX="39dp"
