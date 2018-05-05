@@ -23,6 +23,11 @@ public class SvgConverter {
     }
 
     private double[] getCanvasSize(List<Location> locations) {
+        if (locations.size() == 0) {
+            double[] result = {0, 0};
+            return result;
+        }
+
         double firstLon = locations.get(0).getLongitude(),
                 firstLat = locations.get(0).getLatitude();
         double maxX = firstLon, minX = firstLon, maxY = firstLat,  minY = firstLat;
@@ -34,8 +39,8 @@ public class SvgConverter {
             else if (lon < minX) minX = lon;
         }
         double[] result = new double[2];
-        result[0] = maxX - minX + canvasPadding;
-        result[1] = maxY - minY + canvasPadding;
+        result[0] = ( (maxX - minX) * 100000 ) + canvasPadding;
+        result[1] = ( (maxY - minY) * 100000 ) + canvasPadding;
         return result;
     }
 
@@ -54,7 +59,7 @@ public class SvgConverter {
             tag = tag + createPoint(start, location, canvasDims);
         }
 
-        return tag + "Z\" fill=\"transparent\" stroke=\"black\" />";
+        return tag + "\" fill=\"transparent\" stroke=\"black\" />";
     }
 
     /**

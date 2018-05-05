@@ -10,6 +10,7 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -30,17 +31,25 @@ public class LocationTracker extends ContextWrapper {
     private List<Location> locationList = new ArrayList<>();
     private FusedLocationProviderClient locationClient
             = LocationServices.getFusedLocationProviderClient(this);
+    private TextView coordinatesText;
 
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locations) {
+            Location lastLocation = locations.getLastLocation();
             Log.d("locationcallback", locations.getLastLocation().toString());
-            locationList.add(locations.getLastLocation());
+            if (coordinatesText != null) {
+                coordinatesText.setText(String.format("Current position:\n%f : %f",
+                        lastLocation.getLatitude(), lastLocation.getLongitude()));
+            }
+
+            locationList.add(lastLocation);
         }
     };
 
-    public LocationTracker(Context context) {
+    public LocationTracker(Context context, TextView coordinatesText) {
         super(context);
+        this.coordinatesText = coordinatesText;
         checkLocationPermission();
     }
 
