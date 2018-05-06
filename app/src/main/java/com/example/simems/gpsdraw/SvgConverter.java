@@ -39,8 +39,8 @@ public class SvgConverter {
             else if (lon < minX) minX = lon;
         }
         double[] result = new double[2];
-        result[0] = ( (maxX - minX) * 100000 ) + canvasPadding;
-        result[1] = ( (maxY - minY) * 100000 ) + canvasPadding;
+        result[0] = ( (maxX - minX) * 200000 ) + canvasPadding;
+        result[1] = ( (maxY - minY) * 200000 ) + canvasPadding;
         return result;
     }
 
