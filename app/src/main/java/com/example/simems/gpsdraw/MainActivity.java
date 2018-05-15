@@ -1,9 +1,15 @@
 package com.example.simems.gpsdraw;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -36,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         final Button recordButton = findViewById(R.id.recordButton);
         final EditText svgContainer = findViewById(R.id.svgContainer);
         saveButton.setVisibility(View.INVISIBLE);
+        checkLocationPermission();
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,6 +80,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void checkLocationPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    ) {//Can add more as per requirement
+
+                ActivityCompat.requestPermissions( this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        123);
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

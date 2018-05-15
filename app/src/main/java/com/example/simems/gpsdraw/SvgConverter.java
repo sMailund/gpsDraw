@@ -10,7 +10,7 @@ public class SvgConverter {
     final private String version = "1.1",
         baseProfile = "full",
         xmlns="http://www.w3.org/2000/svg";
-    final int canvasPadding = 10;
+    final public int canvasPadding = 10;
 
     public String createSvgFromLocationList(List<Location> locations) {
         double[] canvasSize = getCanvasSize(locations);
@@ -47,15 +47,20 @@ public class SvgConverter {
     /**
      * creates a path tag from a list of locations
      * @param locations list of locations
+     * @param canvasDims array with dimensions of the canvas
      * @return path tag to be inserted in svg
      */
     private String createPathFromLocationList(List<Location> locations, double[] canvasDims) {
         Location start = locations.get(0);
 
         //start by moving the path to the center of the image
-        String tag = String.format("<path d=\"M%f %f ", canvasDims[1] / 2, canvasDims[0] / 2);
+        String tag = String.format("<path d=\"M%f %f ", canvasDims[0] / 2, canvasDims[1] / 2);
 
         for (Location location : locations) {
+            if (location == start) {
+                // skip the first point, as this has already been drawn
+                continue;
+            }
             tag = tag + createPoint(start, location, canvasDims);
         }
 
@@ -72,8 +77,8 @@ public class SvgConverter {
     private String createPoint(Location start, Location newPoint,
                                double[] canvasDims) {
         return String.format("L%f %f ",
-                calculatePosition(start.getLongitude(), newPoint.getLongitude(), canvasDims[1]),
-                calculatePosition(start.getLatitude(), newPoint.getLatitude(), canvasDims[0]));
+                calculatePosition(newPoint.getLongitude(), start.getLongitude(), canvasDims[0]),
+                calculatePosition(newPoint.getLatitude(), start.getLatitude(), canvasDims[1]));
     }
 
     /**

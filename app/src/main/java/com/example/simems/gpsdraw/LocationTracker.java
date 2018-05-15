@@ -50,7 +50,7 @@ public class LocationTracker extends ContextWrapper {
     public LocationTracker(Context context, TextView coordinatesText) {
         super(context);
         this.coordinatesText = coordinatesText;
-        checkLocationPermission();
+        //checkLocationPermission();
     }
 
     public void startLocationTracking() {
@@ -80,7 +80,7 @@ public class LocationTracker extends ContextWrapper {
                     ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     ) {//Can add more as per requirement
 
-                ActivityCompat.requestPermissions( (Activity) this.getBaseContext(),
+                ActivityCompat.requestPermissions( (Activity) this.getApplicationContext(),
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                         123);
             }
